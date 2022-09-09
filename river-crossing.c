@@ -41,20 +41,12 @@ int main()
 	pthread_mutex_init(&b_mutex, NULL);
 
 	pthread_t serfArray[100];	//niz niti inzenjera 
-	pthread_t hackerArray[100];	//niz niti hakera 
-	int id_hacker[100];		//pomocni nizovi cije se vrednosti prosledjuju     
-	int id_serf[100];		//funkcijama "serfArrives" i "hackerArrives" 
-
-
-	for (int i = 0; i < 100; i++) {
-		id_hacker[i] = (i + 1);
-		id_serf[i] = (i + 1);	//pravljenje pomocnih nizova 
-	}
+	pthread_t hackerArray[100];	//niz niti 
 
 	for (int i = 0; i < 50; i++)
 	{
-		pthread_create(&serfArray[i], NULL, serfArrives, (void*)&id_serf[i]);
-		pthread_create(&hackerArray[i], NULL, hackerArrives, (void*)&id_hacker[i]);	// pravljenje niti koje simuliraju inzenjere i hakere 
+		pthread_create(&serfArray[i], NULL, serfArrives, NULL);
+		pthread_create(&hackerArray[i], NULL, hackerArrives, NULL);	// pravljenje niti koje simuliraju inzenjere i hakere 
 	}
 
 	for (int i = 0; i < CAPACITY; i++)
@@ -67,9 +59,9 @@ int main()
 	return 0;
 }
 
-void* hackerArrives(void* id)
+void* hackerArrives()
 {
-	int ID = *(int*)id;
+	
 	pthread_mutex_lock(&mutex);
 	int status = PASSENGER;
 	hackers += 1;
@@ -113,7 +105,7 @@ void* hackerArrives(void* id)
 	sem_post(&turnstile1);
 
 	char* Str = "Haker";
-	board((void*)&ID, (void*)Str);
+	board((void*)Str);
 
 	pthread_mutex_lock(&b_mutex);
 	count -= 1;
@@ -129,15 +121,15 @@ void* hackerArrives(void* id)
 
 	if (status == CAPTAIN)
 	{
-		row((void*)&ID, (void*)Str);
+		row((void*)Str);
 		pthread_mutex_unlock(&mutex);
 	}
 
 }
 
-void* serfArrives(void* id)
+void* serfArrives()
 {
-	int ID = *(int*)id;
+	
 	pthread_mutex_lock(&mutex);
 	int status = PASSENGER;
 	serfs += 1;
@@ -181,7 +173,7 @@ void* serfArrives(void* id)
 	sem_post(&turnstile1);
 
 	char* Str = "Serf";
-	board((void*)&ID, (void*)Str);
+	board((void*)Str);
 
 	pthread_mutex_lock(&b_mutex);
 	count -= 1;
@@ -197,17 +189,17 @@ void* serfArrives(void* id)
 
 	if (status == CAPTAIN)
 	{
-		row((void*)&ID, (void*)Str);
+		row((void*)Str);
 		pthread_mutex_unlock(&mutex);
 	}
 }
 
-void board(void* id, void* Str)
+void board(void* Str)
 {
 	printf("%s je usao na brod\n", (char*)Str);	//na ekranu se ispisuje koji putnik se ukrcao 
 }
 
-void row(void* id, void* Str)
+void row(void* Str)
 {
 	printf("%s, kapetan, je poceo sa veslanjem\n", (char*)Str); //na ekranu se ispisuje ko od ukrcanih vesla 
 }
