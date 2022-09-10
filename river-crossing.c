@@ -24,10 +24,10 @@ sem_t turnstile2;
 pthread_mutex_t b_mutex;
 int count = 0;
 
-void* hackerArrives(void*);	//metoda za dolazak hakera
-void* serfArrives(void*);	//metoda za dolazak inzenjera  
-void board(void*, void*);	//metoda koja simulira ukrcavanje putnika 
-void row(void*, void*);	//metoda koja simulira veslanje kapetana 
+void* hackerArrives();	//metoda za dolazak hakera
+void* serfArrives();	//metoda za dolazak inzenjera  
+void board(void*);	//metoda koja simulira ukrcavanje putnika 
+void row(void*);	//metoda koja simulira veslanje kapetana 
 
 int main()
 {
@@ -41,7 +41,7 @@ int main()
 	pthread_mutex_init(&b_mutex, NULL);
 
 	pthread_t serfArray[100];	//niz niti inzenjera 
-	pthread_t hackerArray[100];	//niz niti 
+	pthread_t hackerArray[100];	//niz niti hakera
 
 	for (int i = 0; i < 50; i++)
 	{
@@ -61,7 +61,6 @@ int main()
 
 void* hackerArrives()
 {
-	
 	pthread_mutex_lock(&mutex);
 	int status = PASSENGER;
 	hackers += 1;
@@ -76,11 +75,9 @@ void* hackerArrives()
 	}
 	else if (hackers == 2 && serfs >= 2)
 	{
-		int i;
-		for (i = 0; i < 2; i++)
+		for (int i = 0; i < 2; i++)
 			sem_post(&hackerQueue);
-		int j;
-		for (j = 0; j < 2; j++)
+		for (int j = 0; j < 2; j++)
 			sem_post(&serfQueue);
 		serfs -= 2;
 		hackers = 0;
@@ -129,7 +126,7 @@ void* hackerArrives()
 
 void* serfArrives()
 {
-	
+
 	pthread_mutex_lock(&mutex);
 	int status = PASSENGER;
 	serfs += 1;
